@@ -10,7 +10,21 @@ if SERVER then
     
     Punch.Hand = false
     
+    Punch:OnEquip( function( Ability, Ragdoll )
+        
+        // On Ability Equip
+        
+    end)
+    
+    Punch:OnUnequip( function( Ability, Ragdoll )
+        
+        // On Ability Unequip
+        
+    end)
+    
     Punch:OnPress( function( Ability, Ragdoll )
+        
+        // When ability button is initially activated
         
         Ability.Hand = !Ability.Hand
         
@@ -28,17 +42,23 @@ if SERVER then
     
     Punch:OnRelease( function( Ability, Ragdoll )
         
+        // When ability button is released
         
+    end)
+    
+    Punch:OnActive( function( Ability, Ragdoll )
+        
+        // Called every tick ability button is held
         
     end)
     
     Punch:OnTick( function( Ability, Ragdoll )
         
-        
+        // Called every tick ability is equiped
         
     end)
     
-    local Abilities = { Punch }
+    local Abilities = { Punch, Ability( "Ability2" ), Ability( "Ability3" ), Ability( "Ability4" ) }
     
     local Rag = RagPlayer( owner(), Abilities )
     
