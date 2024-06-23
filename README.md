@@ -1,2 +1,5 @@
-# GMod-RagPlayer
-This is a more up to date version of the RagMan or Drunk Combine Expression 2 scripts ported into Starfall with extra capabilities
+# INSTRUCTIONS FOR USE
+
+Put the file **'ragdoll_player_library.txt'** into your **'starfall/libs'** files
+
+Then to use the library take a look at the example code at **'RagPlayer - Example'** lua file along with the documentation, for any more questions feel free to dm me questions!
