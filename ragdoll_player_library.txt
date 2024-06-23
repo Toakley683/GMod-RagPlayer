@@ -1114,7 +1114,11 @@ else
         )
         
         self.Head:applyForceCenter(
-            -physenv.getGravity() * 1.2
+            -physenv.getGravity() * 0.6
+        )
+        
+        self.Spine:applyForceCenter(
+            -physenv.getGravity() * 0.6
         )
         
     end
