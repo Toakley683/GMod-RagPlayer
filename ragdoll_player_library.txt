@@ -594,7 +594,13 @@ else
         net.receive( self.Index .. ":RagPlayer", function( _, Player )
             
             if Player != self.Driver then return end
+            
+            self.SelectedAbility:__OnUnequip( self )
+            
             self.AbilityID = net.readFloat()
+            self.SelectedAbility = self.Abilities[ self.AbilityID ]
+            
+            self.SelectedAbility:__OnEquip( self )
             
         end)
         
@@ -896,7 +902,7 @@ else
                 
                 if self.SelectedAbility == nil then return end
                 
-                self.SelectedAbility:__OnTick( self )
+                self.SelectedAbility:__OnActive( self )
                 
             end
         )
@@ -915,6 +921,8 @@ else
             end
             
         end
+        
+        self.SelectedAbility:__OnTick( self )
         
         self.LFoot:setBuoyancyRatio( 0 )
         self.RFoot:setBuoyancyRatio( 0 )
@@ -1183,17 +1191,26 @@ else
         self.AbilityName = AbilityName
         
         self.PressFunc = function() end
+        self.EquipFunc = function() end
+        self.UnequipFunc = function() end
         self.ReleaseFunc = function() end
         self.TickFunc = function() end
+        self.ActiveTick = function() end
         
     end
     
     function Ability:__OnPress( Ragdoll ) self.PressFunc( self, Ragdoll ) end
+    function Ability:__OnEquip( Ragdoll ) self.EquipFunc( self, Ragdoll ) end
+    function Ability:__OnUnequip( Ragdoll ) self.UnequipFunc( self, Ragdoll ) end
     function Ability:__OnRelease( Ragdoll ) self.ReleaseFunc( self, Ragdoll ) end
     function Ability:__OnTick( Ragdoll ) self.TickFunc( self, Ragdoll ) end
+    function Ability:__OnActive( Ragdoll ) self.ActiveTick( self, Ragdoll ) end
     
     function Ability:OnPress( Func ) self.PressFunc = Func end
+    function Ability:OnEquip( Func ) self.EquipFunc = Func end
+    function Ability:OnUnequip( Func ) self.UnequipFunc = Func end
     function Ability:OnRelease( Func ) self.ReleaseFunc = Func end
     function Ability:OnTick( Func ) self.TickFunc = Func end
+    function Ability:OnActive( Func ) self.ActiveTick = Func end
     
 end
