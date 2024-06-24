@@ -1,8 +1,10 @@
 --@name RagPlayer - Example
 --@author toakley682
 --@shared
---@include libs/ragdoll_player_library.txt
-require( "libs/ragdoll_player_library.txt" )
+--@include https://raw.githubusercontent.com/Jacbo1/Public-Starfall/main/SafeNet/safeNet.lua as SafeNet
+--@include https://raw.githubusercontent.com/Toakley683/GMod-RagPlayer/main/ragdoll_player_library.lua as RagPlayer
+
+require( "RagPlayer" )
 
 if SERVER then
     
