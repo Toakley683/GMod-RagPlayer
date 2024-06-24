@@ -12,6 +12,8 @@ You can contact me on discord at toakley682
 **S** - BACKWARDS <br/>
 **LSHIFT** - SPRINT <br/>
 
+**V** - PERSPECT/CAMERA CHANGE <br/>
+
 **Space (TAP)** - JUMP/FLING <br/>
 **Space (HELD)** - FLIGHT <br/>
 **Space (HELD) + LSHIFT** - FAST FLIGHT <br/>
