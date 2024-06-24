@@ -20,7 +20,7 @@ local net = require( "SafeNet" )
 
 --[[
 
---  Hands move while walking/running ( Priority 1 )
+--  Hands move while walking/running
 
 ]]
 
@@ -501,16 +501,6 @@ else
         self.AbilityID = 1
         self.SelectedAbility = nil
         
-        if self.Abilities then
-            
-            if table.count( self.Abilities ) then
-                
-                self.SelectedAbility = self.Abilities[ self.AbilityID ]
-                
-            end
-            
-        end
-        
         self.Player = Player
         self.Origin = chip():getPos()
         
@@ -556,6 +546,17 @@ else
         
         self.LCalf = self:GetPhysBoneByName( "ValveBiped.Bip01_L_Calf" )
         self.RCalf = self:GetPhysBoneByName( "ValveBiped.Bip01_R_Calf" )
+        
+        if self.Abilities then
+            
+            if table.count( self.Abilities ) then
+                
+                self.SelectedAbility = self.Abilities[ self.AbilityID ]
+                self.SelectedAbility:__OnEquip( self )
+                
+            end
+            
+        end
         
         self.Size = self.Ragdoll:obbSize()
         
