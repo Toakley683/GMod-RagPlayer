@@ -1,8 +1,10 @@
 # INSTRUCTIONS FOR USE
 
-Put the file **'ragdoll_player_library.txt'** into your **'starfall/libs'** files
+Copy the **'RagPlayer - Example'** lua file into your Starfall folder or a new starfall, then get to coding!
 
-Then to use the library take a look at the example code at **'RagPlayer - Example'** lua file along with the documentation, for any more questions feel free to dm me questions!
+You can find some documentation in the WiKi (WIP), for any more questions feel free to dm me questions!
+
+You can contact me on discord at toakley682
 
 # CONTROLS
 
