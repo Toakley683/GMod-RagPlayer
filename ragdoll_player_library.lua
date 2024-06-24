@@ -144,6 +144,88 @@ if CLIENT then
                 
                 local BInd = Ent:lookupBone( "ValveBiped.Bip01_Head1" )
                 
+                local PerspectiveID = 1
+                local Perspectives = {}
+                
+                Perspectives[1] = 
+                { 
+                    Name="Third", 
+                    Function=
+                    function( Pos, Ang, Fov, ZNear, ZFar, HeadPos, HeadAng )
+                        
+                        local CalcViewData = {}
+                        
+                        local Distance = 125
+                        local HitNormalDistance = 2
+                        
+                        local Trace = trace.line( HeadPos, HeadPos - ( Ang:getForward() * 9999999 ), { Ent , Data.Player, Seat } )
+                        
+                        Trace.Distance = Trace.HitPos:getDistance( HeadPos )
+                        
+                        local Normal = Vector()
+                        if Trace.Hit then Normal = ( Trace.HitNormal * HitNormalDistance ) end
+                        
+                        local CameraPosition = localToWorld( Vector( -math.clamp( Trace.Distance, 15, Distance ), 0, 0 ), Angle(), HeadPos, Ang )
+                        
+                        CalcViewData[ "origin" ] = ( CameraPosition + Normal )
+                        CalcViewData[ "znear" ] = 0.5
+                        
+                        return CalcViewData
+                        
+                    end
+                }
+                
+                Perspectives[2] = 
+                { 
+                    Name="ControlledFirst", 
+                    Function=
+                    function( Pos, Ang, Fov, ZNear, ZFar, HeadPos, HeadAng )
+                        
+                        local CalcViewData = {}
+                        
+                        CalcViewData[ "origin" ] = 
+                            HeadPos 
+                            + HeadAng:getRight() * 3
+                            + HeadAng:getForward() * 3
+                        CalcViewData[ "znear" ] = 2
+                        
+                        return CalcViewData
+                        
+                    end
+                }
+                
+                Perspectives[3] = 
+                { 
+                    Name="First", 
+                    Function=
+                    function( Pos, Ang, Fov, ZNear, ZFar, HeadPos, HeadAng )
+                        
+                        local CalcViewData = {}
+                        
+                        CalcViewData[ "origin" ] = 
+                            HeadPos 
+                            + HeadAng:getRight() * 3
+                            + HeadAng:getForward() * 3   
+                        CalcViewData[ "angles" ] = HeadAng:getRight():getAngle()
+                        CalcViewData[ "znear" ] = 2
+                        
+                        return CalcViewData
+                        
+                    end
+                }
+                
+                hook.add( "inputPressed", table.address( Data ) .. ":InputPressed", function( Key )
+                    
+                    if Key != 32 then return end
+                    
+                    // Perspective Change Key
+                    
+                    PerspectiveID = math.clamp( PerspectiveID + 1, 0, table.count( Perspectives ) + 1 )
+                    if PerspectiveID > table.count( Perspectives ) then PerspectiveID = 1 end
+                    if PerspectiveID < 1 then PerspectiveID = table.count( Perspectives ) end
+                    
+                end)
+                
                 hook.add( "calcview", table.address( Data ) .. "CalcView", function( Pos, Ang, Fov, ZNear, ZFar )
                     
                     if BInd == nil then return end
@@ -151,31 +233,16 @@ if CLIENT then
                     if not Ent then return end
                     if not Ent:isValid() then return end
                     
-                    local HeadPos = Ent:getBonePosition( BInd )
+                    local HeadPos, HeadAng = Ent:getBonePosition( BInd )
                     
                     if not Seat then return end
                     if not Seat:isValid() then return end
                     
                     if Seat:getDriver() != player() then return end
                     
-                    local CalcViewData = {}
+                    if not Perspectives[ PerspectiveID ] then return end
                     
-                    local Distance = 125
-                    local HitNormalDistance = 2
-                    
-                    local Trace = trace.line( HeadPos, HeadPos - ( Ang:getForward() * 9999999 ), { Ent , Data.Player, Seat } )
-                    
-                    Trace.Distance = Trace.HitPos:getDistance( HeadPos )
-                    
-                    local Normal = Vector()
-                    if Trace.Hit then Normal = ( Trace.HitNormal * HitNormalDistance ) end
-                    
-                    local CameraPosition = localToWorld( Vector( -math.clamp( Trace.Distance, 15, Distance ), 0, 0 ), Angle(), HeadPos, Ang )
-                    
-                    CalcViewData[ "origin" ] = ( CameraPosition + Normal )
-                    CalcViewData[ "znear" ] = 0.5
-                    
-                    return CalcViewData
+                    return Perspectives[ PerspectiveID ].Function( Pos, Ang, Fov, ZNear, ZFar, HeadPos, HeadAng )
                     
                 end)
                 
@@ -548,17 +615,6 @@ else
         self.LCalf = self:GetPhysBoneByName( "ValveBiped.Bip01_L_Calf" )
         self.RCalf = self:GetPhysBoneByName( "ValveBiped.Bip01_R_Calf" )
         
-        if self.Abilities then
-            
-            if table.count( self.Abilities ) then
-                
-                self.SelectedAbility = self.Abilities[ self.AbilityID ]
-                self.SelectedAbility:__OnEquip( self )
-                
-            end
-            
-        end
-        
         self.Size = self.Ragdoll:obbSize()
         
         local Center = self.Origin + Vector( 0, 0, self.Size[3] / 2 )
@@ -592,6 +648,17 @@ else
         
         self:PopulateControls()
         self:OnFrozen()
+        
+        if self.Abilities then
+            
+            if table.count( self.Abilities ) then
+                
+                self.SelectedAbility = self.Abilities[ self.AbilityID ]
+                self.SelectedAbility:__OnEquip( self )
+                
+            end
+            
+        end
         
         net.receive( self.Index .. ":RagPlayer", function( _, Player )
             
@@ -914,6 +981,9 @@ else
     function RagPlayer:Tick()
         
         for Index, PhysBone in ipairs( self.PhysBones ) do
+            
+            if not PhysBone then continue end
+            if not PhysBone:isValid() then continue end
             
             if not PhysBone:isMoveable() then
                 
