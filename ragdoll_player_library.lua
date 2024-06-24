@@ -20,7 +20,7 @@ local net = require( "SafeNet" )
 
 --[[
 
---  Hands move while walking/running
+--  Hands move while walking/running ( Priority 1 )
 
 ]]
 
@@ -395,7 +395,7 @@ if CLIENT then
                 
                 hook.add( "think", table.address( Data ) .. "UpdatePlayermodel", function()
                     
-                    if not Data.Player then 
+                    if not Data.Player or not Data.Player:isValid() then 
                         
                         if Seat:getDriver() != nil then
                             
@@ -494,6 +494,7 @@ else
         
         self.Keys = {}
         self.Controls = {}
+        self.IgnoredEnts = {}
         
         self.ForwardSpeed = 0
         self.WalkIncrement = 0
@@ -588,7 +589,7 @@ else
         self.Emitter:setSolid( false )
         self.Emitter:setColor( Color( 0, 0, 0, 0 ) )
         self.Emitter:setDrawShadow( false )
-
+        
         self:PopulateControls()
         self:OnFrozen()
         
@@ -1063,8 +1064,13 @@ else
         
         self.ViewYaw = Angle( 0, self.Facing[2] - 90, 0 )
         
-        self.RagdollTrace = TraceDir( self.Ragdoll:getPos(), Vector( 0, 0, -1 ), self.RagdollTraceDist, { self.Ragdoll, self.Seat, self.Emitter } )
-        self.FallTrace = TraceDir( self.Ragdoll:getPos(), Vector( 0, 0, -1 ), 70, { self.Ragdoll, self.Seat, self.Emitter } )
+        local IGN = {}
+        
+        table.add( IGN, { self.Ragdoll, self.Seat, self.Emitter } )
+        table.add( IGN, self.IgnoredEnts )
+        
+        self.RagdollTrace = TraceDir( self.Ragdoll:getPos(), Vector( 0, 0, -1 ), self.RagdollTraceDist, IGN )
+        self.FallTrace = TraceDir( self.Ragdoll:getPos(), Vector( 0, 0, -1 ), 70, IGN )
         
         if not self.FallTrace.Hit or self.Ragdoll:getWaterLevel() > 0 then
             self:RagdollPlayer()
