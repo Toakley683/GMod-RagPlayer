@@ -139,7 +139,6 @@ if CLIENT then
                 Player:setPlayerColor( Data.Player:getPlayerColor() )
                 
                 Player:setParent( Ent )
-                Player:addEffects( 10 )
                 Player:addEffects( 9 )
                 
                 local BInd = Ent:lookupBone( "ValveBiped.Bip01_Head1" )
